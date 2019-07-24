@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int-http="http://www.springframework.org/schema/integration/http"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/integration
+                            http://www.springframework.org/schema/integration/spring-integration.xsd
+                            http://www.springframework.org/schema/integration/http
+                            http://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
+    <!-- INBOUND GATEWAY for zipping files -->
+    <int:channel id="zipRequestChannel"/>
+    <int:channel id="zipResponseChannel"/>
+    <int-http:inbound-gateway
+            request-channel="zipRequestChannel"
+            reply-channel="zipResponseChannel"
+            supported-methods="POST"
+            path="/compress"
+            reply-timeout="50000"
+            request-payload-type="java.lang.String"
+            error-channel="errorChannel">
+        <int-http:request-mapping produces="application/json"/>
+    </int-http:inbound-gateway>
+
+    <int:service-activator
+        input-channel="zipRequestChannel"
+        output-channel="zipResponseChannel"
+        ref="zipServiceActivator"
+        method="zip"/>
+
+    <!-- INBOUND GATEWAY for unzipping files -->
+    <int:channel id="unzipRequestChannel"/>
+    <int:channel id="unzipResponseChannel"/>
+    <int-http:inbound-gateway
+            request-channel="unzipRequestChannel"
+            reply-channel="unzipResponseChannel"
+            supported-methods="POST"
+            path="/decompress"
+            reply-timeout="50000"
+            request-payload-type="java.lang.String"
+            error-channel="errorChannel">
+        <int-http:request-mapping produces="application/json"/>
+    </int-http:inbound-gateway>
+
+    <int:service-activator
+            input-channel="unzipRequestChannel"
+            output-channel="unzipResponseChannel"
+            ref="zipServiceActivator"
+            method="unzip"/>
+</beans>
