@@ -14,7 +14,7 @@ public class ZipServiceRequest {
     private String outputDir;
 
     @JsonProperty
-    private String maxSize;
+    private int maxSize;
 
     public String getInputDir() {
         return inputDir;
@@ -32,11 +32,11 @@ public class ZipServiceRequest {
         this.outputDir = outputDir;
     }
 
-    public String getMaxSize() {
+    public int getMaxSize() {
         return maxSize;
     }
 
-    public void setMaxSize(String maxSize) {
+    public void setMaxSize(int maxSize) {
         this.maxSize = maxSize;
     }
 
